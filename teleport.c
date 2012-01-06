@@ -88,30 +88,55 @@ unsigned int check_without_these(List_Node fringe){ // elegxos stis A kai B gia 
 	unsigned int i,j,result,sum=0;
 	int flag=0;
 	newfails[0]=newfails[1]=0;
-	for (i=0;i<N;i++){
+	for (i=1;i<=N;i++){
 		if (find(fringe,i)==0){
+	//		printf("with %u ",i);
+	//		printf("going from %lu to %lu\n",A[i],B[i]);
 			sum++;
 			flag=0;
 			if (A[i]<B[i]){ // an prepei na paei mprosta o epistimonas ston diadromo
 				for (j=1;((j<=N) && (j!=i));j++){ //elegxos gia overlap me ton proorismo allou epistimona
 					if (find(fringe,j)==0){
-						if ((B[j]>A[i]) && (B[j]<B[i])){
-							newfails[0]=i;
-							newfails[1]=j; // pros8iki twn epistimonwn pou kanoun overlap sto fringe
-							flag=1;	
-							break;
-						} 		// An vre8ei overlap, stamataei o elegxos 
+						if (B[j]<=A[j]){ // an o allos paei aristera
+							if ((B[j]<B[i]) && (A[j]>A[i])) {// 2 eidwn overlap
+								newfails[0]=i;
+								newfails[1]=j; // pros8iki twn epistimonwn pou kanoun overlap sto fringe
+								flag=1;	
+	//			printf("first case! between %u and %u",i,j);
+								break;
+						 	}	// An vre8ei overlap, stamataei o elegxos 
+						}else{ 	// an o allos paei de3ia
+							if (((A[j]<A[i]) && (B[j]>B[i])) || ((A[j]>A[i]) && (B[j]<B[i]))){
+								newfails[0]=i;
+								newfails[1]=j; // pros8iki twn epistimonwn pou kanoun overlap sto fringe
+								flag=1;	
+	//			printf("second case! between %u and %u",i,j);
+								break;
+							}
+						}
 					}
 				}
 				if (flag==1) { break;} 
 			}else {// an o epistimonas  eprepe na paei pisw
 				for (j=1;(j<=N && j!=i);j++){
 					if (find(fringe,j)==0){
-						if ((B[j]<A[i]) && (B[j]>B[i])){
-							newfails[0]=i;
-							newfails[1]=j;
-							flag=1;	
-							break;
+						if (B[j]>=A[j]){ // an o allos paei de3ia
+							if ((B[j]>B[i]) && (A[j]<A[i])){ // 2 eidwn overlap
+								newfails[0]=i;
+								newfails[1]=j; // pros8iki twn epistimonwn pou kanoun overlap sto fringe
+								flag=1;	
+	//			printf("3rd case! between %u and %u",i,j);
+								break;
+						 		// An vre8ei overlap, stamataei o elegxos 
+							}
+						}else{ 	// an o allos paei de3ia
+							if (((A[j]>A[i]) && (B[j]<B[i])) || ((A[j]<A[i]) && (B[j]>B[i]))){
+								newfails[0]=i;
+								newfails[1]=j; // pros8iki twn epistimonwn pou kanoun overlap sto fringe
+								flag=1;	
+	//			printf("4th case! between %u and %u",i,j);
+								break;
+							}
 						}
 					}
 				}
@@ -122,7 +147,6 @@ unsigned int check_without_these(List_Node fringe){ // elegxos stis A kai B gia 
 	if (flag==1){
 		result=0;
 	}else{
-		printf("found something at depth %u\n",sum);
 		result=sum;
 	}
 	return result;
@@ -143,7 +167,6 @@ void teleport(){		//Search kata Breadth-first (logo tis queue)
 
 	while ((frontier->top!=NULL) && (found==0)){
 		current=Queue_Get();
-		printf("now checking how it looks like without mr %u\n",current->id);
 		value=check_without_these(current);
 		if (value!=0){
 			printf("%u\n",value);
@@ -156,6 +179,8 @@ void teleport(){		//Search kata Breadth-first (logo tis queue)
 		printf("0\n");
 	}
 }
+
+
 
 int main(){
 	/* Anagnosi ari8mou epistimonwn */
