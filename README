@@ -1,0 +1,13 @@
+                        Teleport
+
+        Variation of the Crossing Bridges problem
+
+
+Files:
+
+     teleport.c          ; guided BFS solution ~O(2^n)
+     teleport-greedy.c   ; greedy matching (not optimal O(n^2))
+     teleport-dp.c       ; Dynamic Program O(n^2)
+     *.txt               ; testcases
+
+     There's also a O(nlogn) solution which includes binary searching
