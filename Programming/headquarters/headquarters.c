@@ -60,10 +60,10 @@ void matrix_mul(unsigned long long **matrix1, unsigned long long int **matrix2)
  *  */
 unsigned long long headquarters(unsigned long long **start, int k, int s, int t)
 {
-     unsigned long long int **sup1, **result;
+     unsigned long long int **temp, **result;
      unsigned int i, j;
      int k_bits=4*sizeof(unsigned long);
-     sup1 = start;
+     temp = start;
      k--; // Den yparxei prwto epipedo 
 
      /*  Orismos kai arxikopoihsh apotelesmatos ws diagonios pinakas */
@@ -83,10 +83,10 @@ unsigned long long headquarters(unsigned long long **start, int k, int s, int t)
      for (i=0;i<k_bits;++i){
           if ( (k & (1 << i)) << (k_bits-i) ){       // An to i-osto lsb tou k einai 1 
                while (j < i){
-                    matrix_mul(sup1, sup1);            // Evresi start^(2^i)
+                    matrix_mul(temp, temp);            // Evresi start^(2^i)
                     j++;
                }
-               matrix_mul(result, sup1);                  // Kai pollaplasiasmos me to apotelesma
+               matrix_mul(result, temp);                  // Kai pollaplasiasmos me to apotelesma
           }
      }
      return result[s-1][t-1];               
