@@ -1,140 +1,166 @@
-/*
+/*TODO use the adjacency matrix to create the max table
+  TODO find minimum edge
+  TODO return tree without that edge
+  TODO replace bubblesort
+  TODO dynamic allocation
+ 
  * =====================================================================================
  *
- *       Filename:  carnival.c
+ *       Filename:  internets.c
  *
- *    Description:  Problem 2, Set 3,  Algorithms class
+ *    Description:  kruskal from the internets
  *
- *        Version:  0.1
- *        Created:  02/01/2012 08:37:39 PM
+ *        Version:  1.0
+ *        Created:  02/02/2012 01:12:49 AM
  *       Revision:  none
  *       Compiler:  gcc
  *
  *         Author:  Alex Mavrogiannis (afein), nalfemp@gmail.com
- *   Organization:  National Technical University of Athens
+ *   Organization:  
  *
  * =====================================================================================
  */
 #include <stdlib.h>
-#include <stdio.h>
+#include <stdio.h> 
+unsigned long N;          /* Ari8mos koryfwn */
+unsigned long M;          /*  Ari8mos akmwn */
+long** W;                  /* Adjacency Matrix */
+long* E[3];             /*  Synolo twn Akmwn (E)  */ 
+int* U;
 
-unsigned long E, V;
-unsigned long a[2000][2000]; // Adjacency Matrix
+void makeset(int i) {
+     U[i] = i;
+} 
 
-void printArray(){
-     int i, j;
-     for(i=0;i<V;i++)
-     {
-          for(j=0;j<V;j++)
-          {
-               printf("%lu\t", a[i][j]);
-          }
+int find(int i) {
+     int j;
+     j = i;
+     while (U[j] != j)
+          j = U[j];
+     return j;
+}
+
+void merge(int p,  int q) {
+     if (p < q) U[q] = p;
+     else U[p] = q;
+}
+
+int equal(int p,  int q) {
+     if (p == q) return (1);
+     else
+          return (0);
+} 
+
+void initialize(int n) { /*  Arxikopoihsh tou U */
+     int i;
+     for (i = 0; i < n; i++)
+          makeset(i);
+} 
+
+void carnival() {
+     int F[N - 1][3];      /*  To MST */
+     int edges = 0;      /*  akmes sto MST */
+     int next = 0;      /*  Epomeni akmi pros elegxo */
+     int weight = 0;     /*  minimal spanning tree weight */
+     int a,  b,  c,  i,  j; /*  counter/placeholder variables */
+     /*  initialize set of edges */
+     for (i = 0; i < M; i++) {
+          for (j = 0; j < 3; j++)
+               printf(" %3lu",  E[j][i]);
           printf("\n");
      }
-}
-
-void union_ij(int i, int j, int p[]){
-     if(j > i)
-          p[j] = i;
-     else
-          p[i] = j;
-}
-
-int root(int v, int p[]){
-
-     while(p[v] != v)
-     {v = p[v];}
-
-     return v;
-}
-
-void kruskal(unsigned long minimum){
-     int i, j, u, v, p[2000], t[2000][2];
-     int counter=0;
-     int k=0;
-     unsigned long min, sum=0;
-     for (i = 0; i < V; i++){
-          p[i] = i;
-     }  
-     while (counter < V){
-          min = minimum;
-          for (i = 0; i < V; i++){
-               for (j = 0;j < V; j++){
-                    if (a[i][j] < min){
-                         min = a[i][j];
-                         u = i;
-                         v = j;
-                    }
-               }
+     for (i = M - 1; i > 0; i--)
+          for (j = 0; j < i; j++)
+               if (E[2][j] > E[2][j+1]) {
+                    a = E[0][j];
+                    b = E[1][j];
+                    c = E[2][j];
+                    E[0][j] = E[0][j + 1];
+                    E[1][j] = E[1][j + 1];
+                    E[2][j] = E[2][j + 1];
+                    E[0][j + 1] = a;
+                    E[1][j + 1] = b;
+                    E[2][j + 1] = c;
+               } /*  display set of edges - after sort */
+     for (i = 0; i < M; i++) {
+          for (j = 0; j < 3; j++)
+               printf(" %3lu", E[j][i]);
+          printf("\n");
+     } /*  create n disjoint subsets */
+     initialize(N); /*  Arxikopoihsh akmwn se adeio synolo */
+     for (i = 0; i < N - 1; i++)
+          for (j = 0; j < 3; j++)
+               F[i][j] = -1; /*  '-1' denotes 'empty' */
+     while (edges < N - 1) {
+          a = E[0][next];
+          b = E[1][next];
+          i = find(a);
+          j = find(b);
+          if (!equal(i, j)) {
+               merge(i, j);
+               F[edges][0] = E[0][next];
+               F[edges][1] = E[1][next];
+               F[edges][2] = E[2][next];
+               edges++;
           }
-          if (min != minimum){
-               i = p[u];
-               j = p[v];
-               if (i != j)
-               {
-                    t[k][0] = root(u, p);
-                    t[k][1] = root(v, p);
-                    k++;
-                    sum += min;
-                    union_ij(i, j, p);
-               }
-               a[u][v] = a[v][u] = minimum;
-
-          }counter +=1;
-     }   
-     if (counter != V){
-          printf("spanning tree not exist\n");
+          next++;
+     } /*  display edges comprising minimal spanning tree */
+     printf("\nMinimal Spanning Tree Edges:\n");
+     printf("F = (");
+     for (i = 0; i < N - 1; i++) {
+          printf("(V%d, V%d)",  F[i][0],  F[i][1]);
+          if (i < N - 2) printf(",  ");
+          weight = weight + F[i][2];
      }
-     if (counter == V){
-          printf("Adges Spanning tree is\n");
-          for (k = 0; k < V-1 ; k++){
-               printf(" %d -> %d ", t[k][0], t[k][1]);
-          }
-          printf("\nst = %lu \n", sum);
-     }  
-}
-
-unsigned long carnival(){
-     return 1;     
+     printf(")\n");
+     printf("Minimal Spanning Tree Weight = %d\n",  weight);
 }
 
 int main(){
      int i, j, start, end;
      unsigned long value;
      /*  Input */
-	scanf("%lu",&V);
-	scanf("%lu",&E);
+	scanf("%lu",&N); //koryfes
+	scanf("%lu",&M); //akmes
+
+     /* Allocations */
+     W = (long**) malloc( N * sizeof(long*));
+     for (i = 0; i < N; i++) {
+            W[i] = (long*)malloc(N * sizeof(long));
+     }
+     U = (int*) malloc(N * sizeof(int));
+     E[0]=(long*) malloc(N * sizeof(long));
+     E[1]=(long*) malloc(N * sizeof(long));
+     E[2]=(long*) malloc(N * sizeof(long));
+
           
-     for (i=0;i<V;i++){
-          for (j=0;j<V;j++){
-               a[i][j]=0;
+     /* Initialization toy Adjacency Matrix */
+     for (i=0;i<N;i++){
+          for (j=0;j<N;j++){
+               W[i][j]=0;
           }
      }
 
      /*   Placement of Edges in array        */
-     for (i=0;i<E;i++){
+     for (i=0;i<M;i++){
 	     scanf("%d",&start);
 	     scanf("%d",&end);
           scanf("%lu", &value);
-          a[start-1][end-1]=value;
-          a[end-1][start-1]=value;
+          W[start-1][end-1] = value;
+          W[end-1][start-1] = value;
+          E[0][i] = start-1;
+          E[1][i] = end-1;
+          E[2][i] = value;
+     }
+     
+     for (i = 0; i < N; i++) {
+          for (j = 0; j < N; j++){
+               printf(" %3lu",  W[i][j]);
+          }
+          printf("\n");
      }
 
-     
-     kruskal(value); 
-
-     // TODO test thoroughly
-     // TODO debug kruskal
-     // TODO use the adjacency matrix to create the max table
-     // TODO find minimum edge
-     // TODO return tree without that edge
-
-/*     printf("%lu", carnival());
-     printf("enter the number of vertices\n");
-     scanf("%d", &n);
-     AdjacencyMatrix(n);
-     kruskal(n);
- */
+     carnival();
 
      return 0;     
 }
