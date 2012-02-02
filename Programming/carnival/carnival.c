@@ -1,7 +1,6 @@
 /*TODO use the adjacency matrix to create the max table
   TODO find minimum edge
   TODO return tree without that edge
-  TODO replace bubblesort
  
  * =====================================================================================
  *
@@ -26,8 +25,46 @@ long N;          /* Ari8mos koryfwn */
 long M;          /*  Ari8mos akmwn */
 long** W;                  /* Adjacency Matrix */
 long* E[3];             /*  Synolo twn Akmwn (E)  */ 
-long* U;
+long* U;       /* Union */
 
+	/*	Synartiseis gia QuickSort		*/
+void swap(long  int *a, long  int *b)
+{
+	long  int t=*a; *a=*b; *b=t;
+}
+int partition( long l,  long r) {
+     long int pivot;
+     int i, j;
+	pivot = E[2][l];
+	i = l;
+	j = r + 1;
+	while (1) {
+		do++i;
+		while (E[2][i] <= pivot && i <= r);
+		do--j;
+		while (E[2][j] > pivot);
+		if (i >= j) break;
+		swap(&E[0][i],&E[0][j]);
+		swap(&E[1][i],&E[1][j]);
+		swap(&E[2][i],&E[2][j]);
+	}
+     swap(&E[0][l],&E[0][j]);
+     swap(&E[1][l],&E[1][j]);
+     swap(&E[2][l],&E[2][j]);
+	return j;
+}
+
+void quicksort( long l,  long r) {
+     long j;
+	if (l < r) {
+		// divide and conquer
+		j = partition(l, r);
+		quicksort(l, j - 1);
+		quicksort(j + 1, r);
+	}
+}
+
+     /*  Synartiseis gia kruskal's */
 void makeset(long i) {
      U[i] = i;
 } 
@@ -64,23 +101,9 @@ void kruskal() {
      long edges = 0;      /*  akmes sto MST */
      long next = 0;      /*  Epomeni akmi pros elegxo */
      long weight = 0;     /*  minimal spanning tree weight */
-     long a,  b,  c,  i,  j; /*  counter/placeholder variables */
-     /*  initialize set of edges */
+     long a,  b, i,  j; /*  counter/placeholder variables */
     
-     for (i = M - 1; i > 0; i--)
-          for (j = 0; j < i; j++)
-               if (E[2][j] > E[2][j+1]) {
-                    a = E[0][j];
-                    b = E[1][j];
-                    c = E[2][j];
-                    E[0][j] = E[0][j + 1];
-                    E[1][j] = E[1][j + 1];
-                    E[2][j] = E[2][j + 1];
-                    E[0][j + 1] = a;
-                    E[1][j + 1] = b;
-                    E[2][j + 1] = c;
-               } /*  display set of edges - after sort */
-          printf("\n");
+     quicksort(0, M);    /*   sort se au3ousa seira tis akmes */
      initialize(N); /*  Arxikopoihsh akmwn se adeio synolo */
      for (i = 0; i < N - 1; i++)
           for (j = 0; j < 3; j++)
@@ -109,6 +132,9 @@ void kruskal() {
      printf(")\n");
      printf("Minimal Spanning Tree Weight = %lu\n",  weight);
 }
+
+
+
 
 int main(){
      long i, j, start, end;
