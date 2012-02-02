@@ -26,7 +26,7 @@ unsigned long N;     // Global Pli8os koryfwn
 /*  Pollaplasiasmos 2 Tetragonikwn Pinakwn NxN kai to apotelesma ston prwto */
 void matrix_mul(unsigned long long **matrix1, unsigned long long int **matrix2)
 {
-     unsigned int i, j, k;
+     unsigned long i, j, k;
      unsigned long long int **temp;
      unsigned long long int buffer;
 
@@ -58,12 +58,11 @@ void matrix_mul(unsigned long long **matrix1, unsigned long long int **matrix2)
 /*  O ari8mos twn monopatiwn mporei na vre8ei pollaplasiazontas ton adjacency matrix me ton eauto tou analoga 
  *  me ton ari8mo twn epipedwn
  *  */
-unsigned long long headquarters(unsigned long long **start, int k, int s, int t)
+unsigned long long headquarters(unsigned long long **start, unsigned long k, unsigned long s, unsigned long t)
 {
-     unsigned long long int **temp, **result;
-     unsigned int i, j;
-     int k_bits=4*sizeof(unsigned long);
-     temp = start;
+     unsigned long long **result;
+     unsigned long i, j;
+     int k_bits=8*sizeof(unsigned long);
      k--; // Den yparxei prwto epipedo 
 
      /*  Orismos kai arxikopoihsh apotelesmatos ws diagonios pinakas */
@@ -80,13 +79,13 @@ unsigned long long headquarters(unsigned long long **start, int k, int s, int t)
      }
      /*  Pollaplasiasmos olwn twn start^(2^i) gia ta i gia ta opoia i diadiki morfi twn epipedwn */
      j=0;
-     for (i=0;i<k_bits;++i){
-          if ( (k & (1 << i)) << (k_bits-i) ){       // An to i-osto lsb tou k einai 1 
+     for (i=0;i<k_bits;i++){
+          if ( (k & (1 << i)) >>i ){       // An to i-osto lsb tou k einai 1 
                while (j < i){
-                    matrix_mul(temp, temp);            // Evresi start^(2^i)
+                    matrix_mul(start, start);            // Evresi start^(2^i)
                     j++;
                }
-               matrix_mul(result, temp);                  // Kai pollaplasiasmos me to apotelesma
+               matrix_mul(result, start);                  // Kai pollaplasiasmos me to apotelesma
           }
      }
      return result[s-1][t-1];               
