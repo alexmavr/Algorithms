@@ -32,9 +32,9 @@ void swap(long  int *a, long  int *b)
 {
 	long  int t=*a; *a=*b; *b=t;
 }
-int partition( long l,  long r) {
+long partition( long l,  long r) {
      long int pivot;
-     int i, j;
+     long int i, j;
 	pivot = E[2][l];
 	i = l;
 	j = r + 1;
@@ -69,12 +69,14 @@ void makeset(long i) {
      U[i] = i;
 } 
 
-long find(long i) {
+
+long find(long i) { // Kai sympti3i monopatiou
      long j;
      j = i;
-     while (U[j] != j)
-          j = U[j];
-     return j;
+     if (U[j] != j){
+          U[j]=find(U[j]);
+     }
+     return U[j];
 }
 
 void merge(long p,  long q) {
@@ -82,12 +84,6 @@ void merge(long p,  long q) {
      else U[p] = q;
 }
 
-int equal(long p,  long q) {
-     if (p == q) 
-          return 1;
-     else
-          return 0;
-} 
 
 void initialize(long n) { /*  Arxikopoihsh tou U */
      long i;
@@ -103,7 +99,14 @@ void kruskal() {
      long weight = 0;     /*  minimal spanning tree weight */
      long a,  b, i,  j; /*  counter/placeholder variables */
     
-     quicksort(0, M);    /*   sort se au3ousa seira tis akmes */
+    quicksort(0, M);    /*   sort se au3ousa seira tis akmes */
+    printf("\n");
+     for (i = 0; i < M; i++) {
+          printf(" %lu",  E[0][i]);
+          printf(" %lu",  E[1][i]);
+          printf(" %lu",  E[2][i]);
+          printf("\n");
+     }
      initialize(N); /*  Arxikopoihsh akmwn se adeio synolo */
      for (i = 0; i < N - 1; i++)
           for (j = 0; j < 3; j++)
@@ -113,7 +116,7 @@ void kruskal() {
           b = E[1][next];
           i = find(a);
           j = find(b);
-          if (!equal(i, j)) {
+          if (i!=j) {
                merge(i, j);
                F[edges][0] = E[0][next];
                F[edges][1] = E[1][next];
@@ -132,8 +135,6 @@ void kruskal() {
      printf(")\n");
      printf("Minimal Spanning Tree Weight = %lu\n",  weight);
 }
-
-
 
 
 int main(){
@@ -173,7 +174,6 @@ int main(){
           E[2][i] = value;
      }
      
-     /*
      printf("\n");
      for (i = 0; i < M; i++) {
           printf(" %lu",  E[0][i]);
@@ -181,14 +181,7 @@ int main(){
           printf(" %lu",  E[2][i]);
           printf("\n");
      }
-     printf("\n");
-     for (i = 0; i < N; i++) {
-          for (j = 0; j < N; j++){
-               printf(" %lu",  W[i][j]);
-          }
-          printf("\n");
-     } */    // testing shit 
-     kruskal();
+          kruskal();
 
      return 0;     
 }
